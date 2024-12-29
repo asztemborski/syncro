@@ -1,0 +1,26 @@
+name: Server Tests
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.2'
+    
+    - name: Build
+      working-directory: ./server
+      run: go build -v ./...
+
+    - name: Test
+      working-directory: ./server
+      run: go test -v ./...
