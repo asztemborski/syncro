@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/asztemborski/syncro/internal/app"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 type Handler interface {
@@ -22,7 +24,7 @@ type Middleware interface {
 }
 
 type Server struct {
-	App  *app.App
+	app  *app.App
 	http *http.Server
 	echo *echo.Echo
 }
@@ -38,13 +40,11 @@ func NewServer(app *app.App) *Server {
 		WriteTimeout: app.Config().Http.WriteTimeout,
 	}
 
-	server := &Server{
-		App:  app,
+	return &Server{
+		app:  app,
 		http: http,
 		echo: echo,
 	}
-
-	return server
 }
 
 func (s *Server) RegisterHandlers(handlers ...Handler) {
@@ -60,7 +60,12 @@ func (s *Server) RegisterMiddlewares(middlewares ...Middleware) {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	go s.http.ListenAndServe()
+	go func() {
+		s.app.Logger().Info("starting server", zap.String("addr", s.http.Addr))
+		if err := s.http.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			s.app.Logger().Error("server start failed", zap.Error(err))
+		}
+	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -69,8 +74,13 @@ func (s *Server) Start(ctx context.Context) error {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
+	s.app.Logger().Info("shutting down server")
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	return s.http.Shutdown(ctx)
+	if err := s.http.Shutdown(ctx); err != nil {
+		s.app.Logger().Error("server shutdown failed", zap.Error(err))
+		return err
+	}
+	return nil
 }

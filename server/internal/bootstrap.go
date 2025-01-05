@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/asztemborski/syncro/internal/api/handler"
 	"github.com/asztemborski/syncro/internal/app"
 	"github.com/asztemborski/syncro/internal/config"
+	"go.uber.org/zap"
 )
 
 type BootstrapArgs struct {
@@ -18,9 +18,12 @@ type BootstrapArgs struct {
 }
 
 func Run(ctx context.Context, args BootstrapArgs) {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
 	ex, err := os.Executable()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 	}
 
 	appDir := filepath.Dir(ex)
@@ -32,10 +35,10 @@ func Run(ctx context.Context, args BootstrapArgs) {
 
 	cfg, err := loader.Load()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 	}
 
-	app := app.NewApp(cfg)
+	app := app.NewApp(cfg, logger)
 	server := api.NewServer(app)
 	server.RegisterHandlers(
 		handler.NewHealthHandler(app),
