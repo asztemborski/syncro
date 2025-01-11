@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/asztemborski/syncro/internal/api/handler"
+	"github.com/asztemborski/syncro/internal/api/middleware"
 	"github.com/asztemborski/syncro/internal/app"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -40,11 +42,21 @@ func NewServer(app *app.App) *Server {
 		WriteTimeout: app.Config().Http.WriteTimeout,
 	}
 
-	return &Server{
+	server :=  &Server{
 		app:  app,
 		http: http,
 		echo: echo,
 	}
+
+	server.RegisterHandlers(
+		handler.NewHealthHandler(app),
+	)
+
+	server.RegisterMiddlewares(
+		middleware.NewLoggerMiddleware(app),
+	)
+
+	return server
 }
 
 func (s *Server) RegisterHandlers(handlers ...Handler) {

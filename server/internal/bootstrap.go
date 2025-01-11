@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/asztemborski/syncro/internal/api"
-	"github.com/asztemborski/syncro/internal/api/handler"
 	"github.com/asztemborski/syncro/internal/app"
 	"github.com/asztemborski/syncro/internal/config"
 	"go.uber.org/zap"
@@ -40,9 +39,5 @@ func Run(ctx context.Context, args BootstrapArgs) {
 
 	app := app.NewApp(cfg, logger)
 	server := api.NewServer(app)
-	server.RegisterHandlers(
-		handler.NewHealthHandler(app),
-	)
-
 	server.Start(ctx)
 }
