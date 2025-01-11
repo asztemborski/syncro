@@ -4,19 +4,24 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Account struct {
-	Email    string
-	Username string
-	Password password
+	ID            uuid.UUID
+	Email         string
+	EmailVerified bool
+	Username      string
+	IsActive      bool
+	Password      password
 }
 
 func NewAccount(email, username string) *Account {
 	return &Account{
 		Email:    email,
 		Username: username,
+		IsActive: true,
 	}
 }
 

@@ -12,6 +12,8 @@ func TestNewAccount(t *testing.T) {
 
 	assert.Equal(t, account.Email, "test@example.com")
 	assert.Equal(t, account.Username, "test_username")
+	assert.Equal(t, account.EmailVerified, false)
+	assert.Equal(t, account.IsActive, true)
 }
 
 func TestAccountNormalizeEmail(t *testing.T) {
