@@ -44,7 +44,7 @@ func TestHealthCheckHandler(t *testing.T) {
 				},
 			}
 
-			testApp := app.NewApp(testConfig, zaptest.NewLogger(t))
+			testApp := app.NewApp(testConfig, zaptest.NewLogger(t), &app.AccountService{})
 
 			e := echo.New()
 

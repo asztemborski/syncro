@@ -11,6 +11,8 @@ database:
   maxOpenConnections: 25
   maxIdleConnections: 25
   maxIdleTime: "15m"
+  maxOpenConns: 25
+  maxIdleConns: 25
 authentication:
   accessTokenExpiresIn: "5m"
   refreshTokenExpiresIn: "72h"

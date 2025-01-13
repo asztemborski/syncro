@@ -33,6 +33,7 @@ type Server struct {
 
 func NewServer(app *app.App) *Server {
 	echo := echo.New()
+	echo.Validator = handler.NewRequestValidator()
 
 	http := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.Config().Http.Port),
@@ -42,7 +43,7 @@ func NewServer(app *app.App) *Server {
 		WriteTimeout: app.Config().Http.WriteTimeout,
 	}
 
-	server :=  &Server{
+	server := &Server{
 		app:  app,
 		http: http,
 		echo: echo,
@@ -50,6 +51,7 @@ func NewServer(app *app.App) *Server {
 
 	server.RegisterHandlers(
 		handler.NewHealthHandler(app),
+		handler.NewAccountHandler(app),
 	)
 
 	server.RegisterMiddlewares(

@@ -10,6 +10,6 @@ import (
 )
 
 func TestNewApp(t *testing.T) {
-	app := app.NewApp(&config.Configuration{}, zaptest.NewLogger(t))
+	app := app.NewApp(&config.Configuration{}, zaptest.NewLogger(t), &app.AccountService{})
 	assert.NotNil(t, app.Config())
 }

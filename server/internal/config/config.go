@@ -19,6 +19,8 @@ var DefaultConfig = map[string]any{
 		"maxOpenConnections": 25,
 		"maxIdleConnections": 25,
 		"maxIdleTime":        "15m",
+		"maxOpenConns":       25,
+		"maxIdleConns":       25,
 	},
 	"authentication": map[string]any{
 		"accessSecretKey":       "access_secret_key",
@@ -53,6 +55,8 @@ type DatabaseConfig struct {
 	MaxOpenConnections int           `mapstructure:"maxOpenConnections"`
 	MaxIdleConnections int           `mapstructure:"maxIdleConnections"`
 	MaxIdleTime        time.Duration `mapstructure:"maxIdleTime"`
+	MaxOpenConns       int           `mapstructure:"maxOpenConns"`
+	MaxIdleConns       int           `mapstructure:"maxIdleConns"`
 }
 
 type AuthenticationCofnig struct {

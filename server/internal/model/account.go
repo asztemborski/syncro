@@ -14,43 +14,30 @@ type Account struct {
 	EmailVerified bool
 	Username      string
 	IsActive      bool
-	Password      password
+	Password      []byte
 }
 
 func NewAccount(email, username string) *Account {
 	return &Account{
-		Email:    email,
-		Username: username,
+		ID:       uuid.New(),
+		Email:    normalizeString(email),
+		Username: normalizeString(username),
 		IsActive: true,
 	}
 }
 
-func (a *Account) NormalizeEmail() {
-	a.Email = normalizeString(a.Email)
-}
-
-func (a *Account) NormalizeUsername() {
-	a.Username = normalizeString(a.Username)
-}
-
-type password struct {
-	value *string
-	hash  []byte
-}
-
-func (p *password) Set(value string) error {
+func (a *Account) HashPassword(value string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(value), bcrypt.DefaultCost)
 	if err != nil {
 		return fmt.Errorf("failed to hash a password: %w", err)
 	}
 
-	p.value = &value
-	p.hash = hash
+	a.Password = hash
 	return nil
 }
 
-func (p *password) Compare(value string) bool {
-	return bcrypt.CompareHashAndPassword(p.hash, []byte(value)) == nil
+func (a *Account) ComparePassword(value string) bool {
+	return bcrypt.CompareHashAndPassword(a.Password, []byte(value)) == nil
 }
 
 func normalizeString(value string) string {

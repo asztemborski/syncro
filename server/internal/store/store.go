@@ -9,6 +9,7 @@ import (
 
 type AccountStore interface {
 	Save(context.Context, *model.Account) error
+	IsUnique(context.Context, *model.Account) (bool, bool)
 }
 
 type Store interface {
