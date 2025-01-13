@@ -32,7 +32,7 @@ func (m *LoggerMiddleware) LogRequest(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		stop := time.Now()
 
-		m.app.Logger().Info("new request",
+		m.app.Logger().Info("http request",
 			zap.String("remote ip", c.RealIP()),
 			zap.String("host", req.Host),
 			zap.String("method", req.Method),

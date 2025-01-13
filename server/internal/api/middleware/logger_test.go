@@ -18,7 +18,7 @@ func TestLoggerMiddleware(t *testing.T) {
 	observedZapCore, logs := observer.New(zap.InfoLevel)
 	testLogger := zap.New(observedZapCore)
 
-	testApp := app.NewApp(&config.Configuration{}, testLogger)
+	testApp := app.NewApp(&config.Configuration{}, testLogger, &app.AccountService{})
 
 	middleware := NewLoggerMiddleware(testApp)
 
@@ -40,7 +40,7 @@ func TestLoggerMiddleware(t *testing.T) {
 	assert.Equal(t, 1, logs.Len())
 	logEntry := logs.All()[0]
 
-	assert.Equal(t, "new request", logEntry.Message)
+	assert.Equal(t, "http request", logEntry.Message)
 
 	fields := make(map[string]any)
 	for _, field := range logEntry.Context {
