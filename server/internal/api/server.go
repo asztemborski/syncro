@@ -34,6 +34,7 @@ type Server struct {
 func NewServer(app *app.App) *Server {
 	echo := echo.New()
 	echo.Validator = handler.NewRequestValidator()
+	echo.HTTPErrorHandler = handler.NewErrorHandler(app).HandleError
 
 	http := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.Config().Http.Port),
