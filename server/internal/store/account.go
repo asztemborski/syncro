@@ -23,30 +23,25 @@ func (s *SqlAccountStore) Save(ctx context.Context, account *model.Account) erro
 }
 
 func (s *SqlAccountStore) IsUnique(ctx context.Context, account *model.Account) (bool, bool) {
+	emailCheckExp := pg.EXISTS(
+		pg.SELECT(pg.Raw("1")).
+			FROM(table.Account).
+			WHERE(table.Account.Email.EQ(pg.String(account.Email))),
+	)
+	usernameCheckExp := pg.EXISTS(
+		pg.SELECT(pg.Raw("1")).
+			FROM(table.Account).
+			WHERE(table.Account.Username.EQ(pg.String(account.Username))),
+	)
+
 	stmt := pg.SELECT(
-		pg.CASE().
-			WHEN(pg.EXISTS(
-				pg.SELECT(table.Account.ID).
-					FROM(table.Account).
-					WHERE(table.Account.Email.EQ(pg.String(account.Email))),
-			)).
-			THEN(pg.Bool(false)).
-			ELSE(pg.Bool(true)).
-			AS("email_unique"),
-		pg.CASE().
-			WHEN(pg.EXISTS(
-				pg.SELECT(table.Account.ID).
-					FROM(table.Account).
-					WHERE(table.Account.Username.EQ(pg.String(account.Username))),
-			)).
-			THEN(pg.Bool(false)).
-			ELSE(pg.Bool(true)).
-			AS("username_unique"),
-	).FROM(table.Account).LIMIT(1)
+		pg.CASE().WHEN(emailCheckExp).THEN(pg.Bool(false)).ELSE(pg.Bool(true)).AS("email_unique"),
+		pg.CASE().WHEN(usernameCheckExp).THEN(pg.Bool(false)).ELSE(pg.Bool(true)).AS("username_unique"),
+	)
 
 	var result struct {
-		EmailUnique    bool `db:"email_unique"`
-		UsernameUnique bool `db:"username_unique"`
+		EmailUnique    bool
+		UsernameUnique bool
 	}
 
 	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
@@ -55,6 +50,5 @@ func (s *SqlAccountStore) IsUnique(ctx context.Context, account *model.Account) 
 		}
 		return false, false
 	}
-
 	return result.EmailUnique, result.UsernameUnique
 }
