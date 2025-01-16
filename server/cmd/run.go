@@ -32,6 +32,7 @@ var runCommand = &cobra.Command{
 		internal.Run(cmd.Context(), internal.BootstrapArgs{
 			ConfigFile: configFilePath,
 			EnvFile:    envFilePath,
+			EnvPrefix:  envPrefix,
 		})
 	},
 }

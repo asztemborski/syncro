@@ -6,3 +6,31 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    networks:
+      - syncro
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_NAME}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  server:
+    build:
+      context: ./server  
+      dockerfile: Dockerfile
+    container_name: syncro-server
+    volumes:
+      - ./server/config:/root/config 
+    ports:
+      - "8080:8080"
+    networks:
+      - syncro
+    env_file:
+      - ./server/.env
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    command: ["./main", "run"]
+
+networks:
+  syncro:
+    driver: bridge
