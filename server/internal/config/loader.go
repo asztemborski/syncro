@@ -1,9 +1,12 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -38,19 +41,29 @@ func (l *Loader) Load() (*Configuration, error) {
 		l.viper.SetDefault(key, value)
 	}
 
+	if l.configFile != "" {
+		l.viper.SetConfigFile(l.configFile)
+		if err := l.viper.ReadInConfig(); err != nil {
+			if !errors.Is(err, viper.ConfigFileNotFoundError{}) {
+				return nil, fmt.Errorf("error reading config file: %w", err)
+			}
+		}
+	}
+
+	if l.envFile != "" {
+		if err := godotenv.Load(l.envFile); err != nil {
+			if !os.IsNotExist(err) {
+				return nil, fmt.Errorf("error loading .env file: %w", err)
+			}
+		}
+	}
+	l.viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	if l.envPrefix != "" {
 		l.viper.SetEnvPrefix(l.envPrefix)
 	}
-
-	if err := l.loadConfigFile(l.configFile, false); err != nil {
-		return nil, fmt.Errorf("error reading config file: %w", err)
-	}
-
-	if err := l.loadConfigFile(l.envFile, true); err != nil {
-		if !os.IsNotExist(err) {
-			return nil, fmt.Errorf("error reading .env file: %w", err)
-		}
-	}
+	l.viper.AllowEmptyEnv(true)
+	l.setEnvBindings(l.viper, l.envPrefix, DefaultConfig)
+	l.viper.AutomaticEnv()
 
 	var config Configuration
 	if err := l.viper.Unmarshal(&config); err != nil {
@@ -60,17 +73,19 @@ func (l *Loader) Load() (*Configuration, error) {
 	return &config, nil
 }
 
-func (l *Loader) loadConfigFile(filePath string, merge bool) error {
-	if filePath == "" {
-		return nil
-	}
+func (l *Loader) setEnvBindings(v *viper.Viper, prefix string, cfg map[string]any) {
+	for key, value := range cfg {
+		fullKey := key
+		if prefix != "" {
+			fullKey = prefix + "." + key
+		}
 
-	l.viper.SetConfigFile(filePath)
-	if merge {
-		return l.viper.MergeInConfig()
+		if nested, ok := value.(map[string]any); ok {
+			l.setEnvBindings(v, fullKey, nested)
+		} else {
+			v.BindEnv(fullKey)
+		}
 	}
-
-	return l.viper.ReadInConfig()
 }
 
 func WithConfigFile(configFile string) Option {

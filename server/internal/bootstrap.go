@@ -15,6 +15,7 @@ import (
 type BootstrapArgs struct {
 	ConfigFile string
 	EnvFile    string
+	EnvPrefix  string
 }
 
 func Run(ctx context.Context, args BootstrapArgs) {
@@ -31,6 +32,7 @@ func Run(ctx context.Context, args BootstrapArgs) {
 		config.WithConfigFile(filepath.Join(appDir, args.ConfigFile)),
 		config.WithEnvFile(filepath.Join(appDir, args.EnvFile)),
 		config.WithDefaults(config.DefaultConfig),
+		config.WithEnvPrefix(args.EnvPrefix),
 	)
 
 	cfg, err := loader.Load()

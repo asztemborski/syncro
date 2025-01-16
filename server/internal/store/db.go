@@ -22,7 +22,7 @@ func NewPostgresDb(config config.DatabaseConfig) (*sqlx.DB, error) {
 
 	db.SetMaxOpenConns(config.MaxOpenConns)
 	db.SetMaxIdleConns(config.MaxIdleConns)
-	db.SetConnMaxIdleTime(time.Duration(config.MaxIdleConns) * time.Second)
+	db.SetConnMaxIdleTime(config.MaxIdleTime)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

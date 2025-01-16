@@ -8,16 +8,19 @@ import (
 const (
 	DefaultConfigPath = "/config/config-development.yml"
 	DefaultEnvPath    = ".env"
+	DefaultEnvPrefix  = ""
 )
 
 var (
 	configFilePath string
 	envFilePath    string
+	envPrefix      string
 )
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&configFilePath, "config", DefaultConfigPath, "config file path")
 	rootCmd.PersistentFlags().StringVar(&envFilePath, "env", DefaultEnvPath, ".env file path")
+	rootCmd.PersistentFlags().StringVar(&envPrefix, "env-prefix", DefaultEnvPrefix, "env variables prefix")
 
 	rootCmd.AddCommand(runCommand)
 }
