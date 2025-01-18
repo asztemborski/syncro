@@ -4,6 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/model"
@@ -44,12 +46,13 @@ func createAppError(err error) *model.AppErr {
 	case errors.As(err, &appErr):
 		return appErr
 	case errors.As(err, &httpErr):
-		return model.NewAppErr("", http.StatusText(httpErr.Code)).WithStatus(httpErr.Code)
+		return model.NewAppErr("", firstToLower(http.StatusText(httpErr.Code))).WithStatus(httpErr.Code)
 	case errors.As(err, &validationErrs):
 		return processValidationErrors(validationErrs)
 	}
 
-	return model.NewAppErr("", http.StatusText(http.StatusInternalServerError)).WithStatus(http.StatusInternalServerError)
+	return model.NewAppErr("", firstToLower(http.StatusText(http.StatusInternalServerError))).
+		WithStatus(http.StatusInternalServerError)
 }
 
 func processValidationErrors(validationErrs validator.ValidationErrors) *model.AppErr {
@@ -57,8 +60,8 @@ func processValidationErrors(validationErrs validator.ValidationErrors) *model.A
 
 	for _, err := range validationErrs {
 		appError.WithDetails(model.AppErrDetail{
-			Path:    err.Field(),
-			Message: extractValidationFieldErrorMessage(err),
+			Path:    firstToLower(err.Field()),
+			Message: firstToLower(extractValidationFieldErrorMessage(err)),
 		})
 	}
 	return appError
@@ -70,4 +73,16 @@ func extractValidationFieldErrorMessage(err validator.FieldError) string {
 		return strings.TrimSpace(parts[1])
 	}
 	return ""
+}
+
+func firstToLower(s string) string {
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError && size <= 1 {
+		return s
+	}
+	lc := unicode.ToLower(r)
+	if r == lc {
+		return s
+	}
+	return string(lc) + s[size:]
 }
