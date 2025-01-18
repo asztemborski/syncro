@@ -3,7 +3,7 @@ package config
 import "time"
 
 var DefaultConfig = map[string]any{
-	"app": map[string]any{
+	"core": map[string]any{
 		"debug":       false,
 		"version":     "0.0.1",
 		"environment": "production",
@@ -31,7 +31,7 @@ var DefaultConfig = map[string]any{
 }
 
 type Configuration struct {
-	App            AppConfig            `mapstructure:"app"`
+	App            AppConfig            `mapstructure:"core"`
 	Http           HttpServerConfig     `mapstructure:"http"`
 	Database       DatabaseConfig       `mapstructure:"database"`
 	Authentication AuthenticationCofnig `mapstructure:"authentication"`

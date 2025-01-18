@@ -4,16 +4,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
 type LoggerMiddleware struct {
-	app *app.App
+	app *core.App
 }
 
-func NewLoggerMiddleware(app *app.App) *LoggerMiddleware {
+func NewLoggerMiddleware(app *core.App) *LoggerMiddleware {
 	return &LoggerMiddleware{app: app}
 }
 

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/asztemborski/syncro/internal/api"
-	"github.com/asztemborski/syncro/internal/app"
 	"github.com/asztemborski/syncro/internal/config"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/store"
 	"go.uber.org/zap"
 )
@@ -46,9 +46,9 @@ func Run(ctx context.Context, args BootstrapArgs) {
 	}
 
 	store := store.NewSqlStore(db)
-	accountService := app.NewAccountService(store.Account())
+	accountService := core.NewAccountService(store.Account())
 
-	app := app.NewApp(cfg, logger, accountService)
+	app := core.NewApp(cfg, logger, accountService)
 	server := api.NewServer(app)
 	server.Start(ctx)
 }

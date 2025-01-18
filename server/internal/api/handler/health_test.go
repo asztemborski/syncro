@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/config"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -44,7 +44,7 @@ func TestHealthCheckHandler(t *testing.T) {
 				},
 			}
 
-			testApp := app.NewApp(testConfig, zaptest.NewLogger(t), &app.AccountService{})
+			testApp := core.NewApp(testConfig, zaptest.NewLogger(t), &core.AccountService{})
 
 			e := echo.New()
 

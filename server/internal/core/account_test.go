@@ -1,10 +1,10 @@
-package app_test
+package core_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,13 +47,13 @@ func (s *InMemoryAccountStore) Clear() {
 
 func TestAccountService_CreateAccount(t *testing.T) {
 	store := NewInMemoryAccountStore()
-	service := app.NewAccountService(store)
+	service := core.NewAccountService(store)
 	ctx := context.Background()
 
 	t.Run("should save new account if email and username are unique", func(t *testing.T) {
 		store.Clear()
 		store.Add(ctx, model.NewAccount("test@example.com", "testuser"))
-		payload := app.CreateAccountPayload{
+		payload := core.CreateAccountPayload{
 			Email:    "test@unique.com",
 			Username: "testunique",
 			Password: "password123",
@@ -66,26 +66,26 @@ func TestAccountService_CreateAccount(t *testing.T) {
 	t.Run("should return error if email is not unique", func(t *testing.T) {
 		store.Clear()
 		store.Add(ctx, model.NewAccount("test@example.com", "testuser"))
-		payload := app.CreateAccountPayload{
+		payload := core.CreateAccountPayload{
 			Email:    "test@example.com",
 			Username: "testunique",
 			Password: "password123",
 		}
 
 		err := service.CreateAccount(ctx, payload)
-		assert.Equal(t, err, app.ErrEmailInUse)
+		assert.Equal(t, err, core.ErrEmailInUse)
 	})
 
 	t.Run("should return error if username is not unique", func(t *testing.T) {
 		store.Clear()
 		store.Add(ctx, model.NewAccount("test@example.com", "testuser"))
-		payload := app.CreateAccountPayload{
+		payload := core.CreateAccountPayload{
 			Email:    "test@unique.com",
 			Username: "testuser",
 			Password: "password123",
 		}
 
 		err := service.CreateAccount(ctx, payload)
-		assert.Equal(t, err, app.ErrUsernameInUse)
+		assert.Equal(t, err, core.ErrUsernameInUse)
 	})
 }

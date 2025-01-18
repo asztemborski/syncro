@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/config"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +18,7 @@ func TestLoggerMiddleware(t *testing.T) {
 	observedZapCore, logs := observer.New(zap.InfoLevel)
 	testLogger := zap.New(observedZapCore)
 
-	testApp := app.NewApp(&config.Configuration{}, testLogger, &app.AccountService{})
+	testApp := core.NewApp(&config.Configuration{}, testLogger, &core.AccountService{})
 
 	middleware := NewLoggerMiddleware(testApp)
 

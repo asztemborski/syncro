@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/asztemborski/syncro/internal/model"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -17,10 +17,10 @@ const (
 )
 
 type ErrorHandler struct {
-	app *app.App
+	app *core.App
 }
 
-func NewErrorHandler(app *app.App) *ErrorHandler {
+func NewErrorHandler(app *core.App) *ErrorHandler {
 	return &ErrorHandler{app: app}
 }
 

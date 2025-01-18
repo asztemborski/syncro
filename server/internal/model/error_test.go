@@ -41,7 +41,7 @@ func TestAppErrError(t *testing.T) {
 
 	t.Run("should handle missing code and message gracefully", func(t *testing.T) {
 		err := model.NewAppErr("", "").Wrap(errors.New("wrapped error"))
-		assert.Equal(t, "app.error: app error has occurred: wrapped error", err.Error())
+		assert.Equal(t, "core.error: core error has occurred: wrapped error", err.Error())
 	})
 }
 

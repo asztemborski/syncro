@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	DefaultAppErrCode    = "app.error"
-	DefaultAppErrMessage = "app error has occurred"
+	DefaultAppErrCode    = "core.error"
+	DefaultAppErrMessage = "core error has occurred"
 )
 
 type AppErrDetail struct {

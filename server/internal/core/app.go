@@ -1,4 +1,4 @@
-package app
+package core
 
 import (
 	"github.com/asztemborski/syncro/internal/config"

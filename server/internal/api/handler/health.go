@@ -3,15 +3,15 @@ package handler
 import (
 	"net/http"
 
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/labstack/echo/v4"
 )
 
 type HealthHandler struct {
-	app *app.App
+	app *core.App
 }
 
-func NewHealthHandler(app *app.App) *HealthHandler {
+func NewHealthHandler(app *core.App) *HealthHandler {
 	return &HealthHandler{app: app}
 }
 

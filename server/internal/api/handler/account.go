@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/labstack/echo/v4"
 )
 
 type AccountHandler struct {
-	app app.App
+	app core.App
 }
 
-func NewAccountHandler(app *app.App) *AccountHandler {
+func NewAccountHandler(app *core.App) *AccountHandler {
 	return &AccountHandler{app: *app}
 }
 
@@ -30,7 +30,7 @@ func (h *AccountHandler) createAccount(c echo.Context) error {
 		return err
 	}
 
-	return h.app.AccountService().CreateAccount(c.Request().Context(), app.CreateAccountPayload{
+	return h.app.AccountService().CreateAccount(c.Request().Context(), core.CreateAccountPayload{
 		Email:    req.Email,
 		Username: req.Username,
 		Password: req.Password,

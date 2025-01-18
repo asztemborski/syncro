@@ -12,7 +12,7 @@ import (
 
 	"github.com/asztemborski/syncro/internal/api/handler"
 	"github.com/asztemborski/syncro/internal/api/middleware"
-	"github.com/asztemborski/syncro/internal/app"
+	"github.com/asztemborski/syncro/internal/core"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
@@ -26,12 +26,12 @@ type Middleware interface {
 }
 
 type Server struct {
-	app  *app.App
+	app  *core.App
 	http *http.Server
 	echo *echo.Echo
 }
 
-func NewServer(app *app.App) *Server {
+func NewServer(app *core.App) *Server {
 	echo := echo.New()
 	echo.Validator = handler.NewRequestValidator()
 	echo.HTTPErrorHandler = handler.NewErrorHandler(app).HandleError
