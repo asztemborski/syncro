@@ -63,7 +63,7 @@ func (e *AppErr) Error() string {
 }
 
 func (e *AppErr) WithDetails(details ...AppErrDetail) *AppErr {
-	e.Details = details
+	e.Details = append(e.Details, details...)
 	return e
 }
 
