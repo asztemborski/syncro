@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	ValidationErrorCode = "thrive.validation"
+	ValidationErrorCode = "syncro.validation"
 )
 
 type ErrorHandler struct {
