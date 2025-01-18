@@ -6,7 +6,8 @@ RUN go mod tidy
 
 COPY . .
 
-RUN go build -o main .
+ARG TARGETARCH
+RUN GOARCH=$TARGETARCH go build -o main .
 
 FROM alpine:latest
 

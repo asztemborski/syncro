@@ -1,4 +1,4 @@
-name: server tests
+name: Run server tests
 
 on:
   push:
