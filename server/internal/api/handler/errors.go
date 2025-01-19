@@ -68,7 +68,7 @@ func processValidationErrors(validationErrs validator.ValidationErrors) *model.A
 }
 
 func extractFieldErrorMessage(err validator.FieldError) string {
-	return fmt.Sprintf("field validation for field '%s' failed on the '%s' tag",
+	return fmt.Sprintf("field validation for '%s' failed on the '%s' tag",
 		firstToLower(err.Field()), err.Tag())
 }
 
