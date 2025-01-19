@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -46,12 +47,12 @@ func createAppError(err error) *model.AppErr {
 	case errors.As(err, &appErr):
 		return appErr
 	case errors.As(err, &httpErr):
-		return model.NewAppErr("", firstToLower(http.StatusText(httpErr.Code))).WithStatus(httpErr.Code)
+		return model.NewAppErr("", strings.ToLower(http.StatusText(httpErr.Code))).WithStatus(httpErr.Code)
 	case errors.As(err, &validationErrs):
 		return processValidationErrors(validationErrs)
 	}
 
-	return model.NewAppErr("", firstToLower(http.StatusText(http.StatusInternalServerError))).
+	return model.NewAppErr("", strings.ToLower(http.StatusText(http.StatusInternalServerError))).
 		WithStatus(http.StatusInternalServerError)
 }
 
@@ -61,7 +62,7 @@ func processValidationErrors(validationErrs validator.ValidationErrors) *model.A
 	for _, err := range validationErrs {
 		appError.WithDetails(model.AppErrDetail{
 			Path:    firstToLower(err.Field()),
-			Message: firstToLower(extractFieldErrorMessage(err)),
+			Message: extractFieldErrorMessage(err),
 		})
 	}
 	return appError
