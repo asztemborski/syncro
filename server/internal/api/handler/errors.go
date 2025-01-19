@@ -2,8 +2,8 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
-	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -61,18 +61,15 @@ func processValidationErrors(validationErrs validator.ValidationErrors) *model.A
 	for _, err := range validationErrs {
 		appError.WithDetails(model.AppErrDetail{
 			Path:    firstToLower(err.Field()),
-			Message: firstToLower(extractValidationFieldErrorMessage(err)),
+			Message: firstToLower(extractFieldErrorMessage(err)),
 		})
 	}
 	return appError
 }
 
-func extractValidationFieldErrorMessage(err validator.FieldError) string {
-	parts := strings.Split(err.Error(), "Error:")
-	if len(parts) > 1 {
-		return strings.TrimSpace(parts[1])
-	}
-	return ""
+func extractFieldErrorMessage(err validator.FieldError) string {
+	return fmt.Sprintf("field validation for field '%s' failed on the '%s' tag",
+		firstToLower(err.Field()), err.Tag())
 }
 
 func firstToLower(s string) string {
