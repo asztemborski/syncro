@@ -57,6 +57,7 @@ func NewServer(app *core.App) *Server {
 
 	server.RegisterMiddlewares(
 		middleware.NewLoggerMiddleware(app),
+		middleware.NewRateLimiterMiddleware(app),
 	)
 
 	return server

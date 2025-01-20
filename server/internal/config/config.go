@@ -13,6 +13,11 @@ var DefaultConfig = map[string]any{
 		"idleTimeout":  "60s",
 		"readTimeout":  "5s",
 		"writeTimeout": "10s",
+		"rateLimiter": map[string]any{
+			"enabled":      true,
+			"maximumRPS":   20,
+			"maximumBurst": 10,
+		},
 	},
 	"database": map[string]any{
 		"dsn":                "postgres://username:password@host:port/database",
@@ -44,10 +49,17 @@ type AppConfig struct {
 }
 
 type HttpServerConfig struct {
-	Port         int           `mapstructure:"port"`
-	IdleTimeout  time.Duration `mapstructure:"idleTimeout"`
-	ReadTimeout  time.Duration `mapstructure:"readTimeout"`
-	WriteTimeout time.Duration `mapstructure:"writeTimeout"`
+	Port         int               `mapstructure:"port"`
+	IdleTimeout  time.Duration     `mapstructure:"idleTimeout"`
+	ReadTimeout  time.Duration     `mapstructure:"readTimeout"`
+	WriteTimeout time.Duration     `mapstructure:"writeTimeout"`
+	RateLimiter  RateLimiterConfig `mapstructure:"rateLimiter"`
+}
+
+type RateLimiterConfig struct {
+	MaximumRPS   float64 `mapstructure:"maximumRPS"`
+	MaximumBurst int     `mapstructure:"maximumBurst"`
+	Enabled      bool    `mapstructure:"enabled"`
 }
 
 type DatabaseConfig struct {
